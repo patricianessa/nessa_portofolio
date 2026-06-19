@@ -1,0 +1,9 @@
+services:
+  patricia-portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: patricia-portfolio
+    ports:
+      - "8080:80"
+    restart: unless-stopped
