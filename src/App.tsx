@@ -1,15 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { BootScreen } from './components/BootScreen';
+import { useEffect } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { Desktop } from './components/Desktop';
 
 function App() {
-  const [booted, setBooted] = useState(false);
-
-  // Cursor spotlight effect for wallpaper-macos
   useEffect(() => {
-    if (!booted) return;
-    
     let rafId: number;
     const handleMouseMove = (e: MouseEvent) => {
       cancelAnimationFrame(rafId);
@@ -24,20 +18,9 @@ function App() {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(rafId);
     };
-  }, [booted]);
-
-  const handleBootComplete = useCallback(() => {
-    setBooted(true);
   }, []);
 
-  return (
-    <>
-      <AnimatePresence>
-        {!booted && <BootScreen onComplete={handleBootComplete} />}
-      </AnimatePresence>
-      {booted && <Desktop />}
-    </>
-  );
+  return <MotionConfig reducedMotion="user"><Desktop /></MotionConfig>;
 }
 
 export default App;

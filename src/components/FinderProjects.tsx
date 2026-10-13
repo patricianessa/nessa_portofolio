@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Folder, FileCode, ChevronRight, ExternalLink, Database, Server, Cpu, Folders } from "lucide-react";
+import { Folder, FileCode, ChevronRight, Database, Server, Cpu, Folders } from "lucide-react";
 import { projects } from "../data/projects";
 import { AnimatedCard } from "./AnimatedCard";
 import { staggerItem } from "../lib/motion";
 
-const categories = ["Featured", "Data", "DevOps", "Systems"];
+const categories = ["Featured", ...new Set(projects.map((project) => project.category))];
 
 const categoryMeta: Record<string, { icon: React.ReactNode; count: number; accent: "violet" | "sky" | "amber" | "emerald" }> = {
   Featured: { icon: <Folders size={14} />, count: projects.length, accent: "violet" },
@@ -17,6 +17,7 @@ const categoryMeta: Record<string, { icon: React.ReactNode; count: number; accen
 export const FinderProjects: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState("Featured");
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const filteredProjects =
     activeCategory === "Featured"
@@ -24,6 +25,12 @@ export const FinderProjects: React.FC = () => {
       : projects.filter((p) => p.category === activeCategory);
 
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
+
+  useEffect(() => {
+    if (!selectedProject || !window.matchMedia("(max-width: 639px)").matches) return;
+    previewRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    previewRef.current?.querySelector("h3")?.focus();
+  }, [selectedProject]);
 
   const categoryColors: Record<string, string> = {
     Data: "text-sky-500",
@@ -42,7 +49,7 @@ export const FinderProjects: React.FC = () => {
       {/* Sidebar */}
       <div className="shrink-0">
         <AnimatedCard accent="violet" noPadding className="p-1.5">
-          <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-2.5 py-1.5">
+          <div className="text-[11px] font-bold text-zinc-700 uppercase tracking-widest px-2.5 py-1.5">
             Categories
           </div>
           {categories.map((cat) => {
@@ -55,10 +62,11 @@ export const FinderProjects: React.FC = () => {
                   setActiveCategory(cat);
                   setSelectedProjectId(null);
                 }}
+                aria-pressed={isActive}
                 className={`relative w-full text-left px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 flex items-center gap-2 ${
                   isActive
                     ? "bg-violet-500/10 text-violet-700"
-                    : "text-zinc-500 hover:bg-white/60 hover:text-zinc-700"
+                    : "text-zinc-700 hover:bg-white/60 hover:text-zinc-900"
                 }`}
               >
                 {/* Active indicator bar */}
@@ -71,14 +79,14 @@ export const FinderProjects: React.FC = () => {
                 )}
                 <Folder
                   size={13}
-                  className={isActive ? "text-violet-500" : "text-zinc-400"}
+                  className={isActive ? "text-violet-700" : "text-zinc-600"}
                 />
                 <span className="truncate">{cat}</span>
                 <span
                   className={`ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
                     isActive
                       ? "bg-violet-100 text-violet-600"
-                      : "bg-zinc-100 text-zinc-400"
+                      : "bg-zinc-100 text-zinc-700"
                   }`}
                 >
                   {meta.count}
@@ -106,7 +114,7 @@ export const FinderProjects: React.FC = () => {
           >
             {filteredProjects.length === 0 && (
               <div className="col-span-full flex items-center justify-center py-12 bg-white/50 border border-white/60 rounded-xl">
-                <p className="text-sm text-zinc-400">No projects in this category yet.</p>
+                <p className="text-sm text-zinc-700">No projects in this category yet.</p>
               </div>
             )}
             {filteredProjects.map((project, idx) => (
@@ -117,6 +125,7 @@ export const FinderProjects: React.FC = () => {
                 animate="visible"
                 transition={{ delay: idx * 0.04 }}
                 onClick={() => setSelectedProjectId(project.id)}
+                aria-pressed={selectedProjectId === project.id}
                 className={`text-left rounded-xl p-4 transition-all duration-200 group relative overflow-hidden ${
                   selectedProjectId === project.id
                     ? "bg-violet-50/80 border border-violet-300/40 shadow-md shadow-violet-200/20"
@@ -158,10 +167,10 @@ export const FinderProjects: React.FC = () => {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-[13px] text-zinc-800 truncate group-hover:text-violet-700 transition-colors">
-                        {project.filename}
+                      <p className="font-semibold text-sm text-zinc-900 leading-snug group-hover:text-violet-800 transition-colors line-clamp-2">
+                        {project.title}
                       </p>
-                      <p className="text-[10px] text-zinc-400 mt-0.5 line-clamp-1">
+                      <p className="text-xs text-zinc-700 mt-1 line-clamp-2">
                         {project.description}
                       </p>
                     </div>
@@ -181,14 +190,14 @@ export const FinderProjects: React.FC = () => {
                     {project.techStack.slice(0, 3).map((tech) => (
                       <span
                         key={tech}
-                        className="text-[10px] font-medium text-zinc-500 bg-zinc-50 px-2 py-1 rounded-md border border-zinc-100/80 whitespace-nowrap leading-none"
+                        className="text-[11px] font-medium text-zinc-700 bg-zinc-50 px-2 py-1 rounded-md border border-zinc-200 whitespace-nowrap leading-none"
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
-                  <span className="text-[10px] font-semibold text-zinc-300 group-hover:text-violet-400 transition-colors shrink-0">
-                    Preview →
+                  <span className="text-[11px] font-semibold text-violet-800 group-hover:text-violet-950 transition-colors shrink-0">
+                    Details →
                   </span>
                 </div>
               </motion.button>
@@ -197,7 +206,7 @@ export const FinderProjects: React.FC = () => {
         </AnimatePresence>
 
         {/* Preview Panel (below cards, all screen sizes) */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {selectedProject ? (
             <motion.div
               key={selectedProject.id}
@@ -205,6 +214,7 @@ export const FinderProjects: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
+              ref={previewRef}
               className="premium-card relative overflow-hidden"
             >
               {/* Background glow based on category */}
@@ -223,7 +233,7 @@ export const FinderProjects: React.FC = () => {
               />
 
               <div className="relative z-10 p-4 sm:p-5">
-                <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                <div className="text-xs font-bold text-zinc-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   Preview
                 </div>
@@ -246,22 +256,22 @@ export const FinderProjects: React.FC = () => {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-bold text-sm text-zinc-800">
+                  <h3 tabIndex={-1} className="font-bold text-base text-zinc-900 focus:outline-none">
                       {selectedProject.title}
                     </h3>
-                    <p className="text-[11px] text-zinc-500 leading-relaxed mt-1 mb-3 break-words">
+                    <p className="text-sm text-zinc-700 leading-relaxed mt-2 mb-4 break-words">
                       {selectedProject.fullDescription}
                     </p>
 
                     <div className="space-y-1.5">
-                      <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">
+                      <div className="text-xs font-bold text-zinc-700 uppercase tracking-widest">
                         Tech Stack
                       </div>
                       <div className="flex flex-wrap gap-1">
                         {selectedProject.techStack.map((tech) => (
                           <span
                             key={tech}
-                            className="text-[10px] font-medium text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded border border-violet-100/60"
+                            className="text-xs font-medium text-violet-800 bg-violet-50 px-2 py-1 rounded border border-violet-200"
                           >
                             {tech}
                           </span>
@@ -269,10 +279,7 @@ export const FinderProjects: React.FC = () => {
                       </div>
                     </div>
 
-                    <button className="mt-3 sm:mt-4 flex items-center justify-center gap-2 h-[32px] sm:h-[36px] px-3 bg-gradient-to-r from-violet-500 to-violet-400 text-white text-[11px] sm:text-[12px] font-semibold rounded-lg hover:shadow-lg hover:shadow-violet-500/25 transition-all w-full sm:w-auto sm:inline-flex">
-                      <ExternalLink size={11} />
-                      View Project
-                    </button>
+                    <p className="mt-4 text-xs text-zinc-700">Project links and supporting artifacts are not available yet.</p>
                   </div>
                 </div>
               </div>
@@ -286,9 +293,9 @@ export const FinderProjects: React.FC = () => {
             >
               <div className="text-center p-4 flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center shrink-0">
-                  <Folder size={14} className="text-zinc-300" />
+                  <Folder size={14} className="text-zinc-600" />
                 </div>
-                <p className="text-xs text-zinc-400">Select a project to view details</p>
+                <p className="text-sm text-zinc-700">Select a project to view details</p>
               </div>
             </motion.div>
           )}

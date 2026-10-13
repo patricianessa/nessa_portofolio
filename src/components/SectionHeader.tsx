@@ -11,6 +11,7 @@ interface SectionHeaderProps {
   gradient?: string;
   badge?: React.ReactNode;
   sectionNumber?: string;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
 }
 
 const bgGradients: Record<string, string> = {
@@ -32,6 +33,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   gradient,
   badge,
   sectionNumber,
+  headingRef,
 }) => {
   const bgGrad = gradient || bgGradients.default;
 
@@ -42,9 +44,6 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
       animate="visible"
       className={`rounded-2xl border border-white/60 bg-gradient-to-br ${bgGrad} relative overflow-hidden`}
     >
-      {/* Decorative noise */}
-      <div className="absolute inset-0 soft-noise opacity-[0.03] pointer-events-none" aria-hidden="true" />
-
       <div className="relative flex items-center gap-3 py-3.5 px-4 md:px-5">
         {/* Glowing icon tile */}
         <div className="relative shrink-0">
@@ -62,17 +61,17 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         {/* Text content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-600">
               {eyebrow}
             </span>
             <div className="glow-line w-6 hidden sm:block" aria-hidden="true" />
             {badge && <div className="shrink-0">{badge}</div>}
           </div>
-          <h2 className="text-lg md:text-xl font-extrabold text-zinc-800 tracking-tight leading-tight mt-0.5">
+          <h2 ref={headingRef} tabIndex={-1} className="text-lg md:text-xl font-extrabold text-zinc-800 tracking-tight leading-tight mt-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded">
             {title}
           </h2>
           {description && (
-            <p className="text-[12px] text-zinc-500 mt-0.5 leading-relaxed max-w-lg">
+            <p className="text-sm text-zinc-600 mt-0.5 leading-relaxed max-w-lg">
               {description}
             </p>
           )}
@@ -81,15 +80,13 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         {/* Section number / status pill */}
         {sectionNumber && (
           <div className="hidden md:flex items-center gap-2 shrink-0">
-            <span className="text-[10px] font-semibold text-zinc-400 bg-white/60 border border-white/60 px-2.5 py-1 rounded-full">
+            <span className="text-[11px] font-semibold text-zinc-600 bg-white/75 border border-white/60 px-2.5 py-1 rounded-full">
               {sectionNumber}
             </span>
           </div>
         )}
       </div>
 
-      {/* Shimmer line */}
-      <div className="shimmer-line" aria-hidden="true" />
     </motion.div>
   );
 };

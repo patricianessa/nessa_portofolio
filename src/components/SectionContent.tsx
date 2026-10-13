@@ -24,6 +24,7 @@ import {
 import { profile } from "../data/profile";
 import { certifications } from "../data/certifications";
 import { leadership } from "../data/leadership";
+import { skills } from "../data/skills";
 import { SectionHeader } from "./SectionHeader";
 import { FinderProjects } from "./FinderProjects";
 import { TerminalWindow } from "./TerminalWindow";
@@ -35,9 +36,10 @@ import profilePhoto from "../assets/nessa_pp.jpeg";
 
 interface SectionContentProps {
   windowId: string;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
 }
 
-export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
+export const SectionContent: React.FC<SectionContentProps> = ({ windowId, headingRef }) => {
   switch (windowId) {
     // ─────────────── ABOUT — Profile Dashboard ───────────────
     case "about":
@@ -55,6 +57,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description=""
             gradient="from-violet-500/8 to-fuchsia-400/6"
             sectionNumber="Portfolio / 01"
+            headingRef={headingRef}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -89,23 +92,13 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                     <span className="status-pulse inline-flex items-center text-[10px] font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200/50 px-2.5 py-1 rounded-full">
                       {profile.availabilityStatus}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-zinc-400 bg-white/80 border border-zinc-200/40 px-2 py-1 rounded-full">
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-zinc-700 bg-white/80 border border-zinc-200/50 px-2 py-1 rounded-full">
                       <MapPin size={10} />
                       {profile.location}
                     </span>
                   </div>
 
                   {/* Quick stats */}
-                  <div className="grid grid-cols-2 gap-2 w-full mt-4">
-                    <div className="bg-violet-50/80 rounded-xl p-2.5 text-center border border-violet-100/40">
-                      <span className="text-lg font-bold text-violet-600 block">{profile.education.gpa}</span>
-                      <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-wide">GPA</span>
-                    </div>
-                    <div className="bg-sky-50/80 rounded-xl p-2.5 text-center border border-sky-100/40">
-                      <span className="text-xs font-bold text-sky-700 block leading-tight">{profile.education.expectedGraduation.split(" ")[0]}</span>
-                      <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-wide">Graduation</span>
-                    </div>
-                  </div>
                 </div>
               </AnimatedCard>
             </motion.div>
@@ -123,23 +116,6 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                   </div>
                 </div>
               </AnimatedCard>
-
-              {/* Quick facts row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {[
-                  { label: "GPA", value: profile.education.gpa, accent: "violet" as const },
-                  { label: "Graduation", value: profile.education.expectedGraduation, accent: "sky" as const },
-                  { label: "Field", value: "Information Systems", accent: "emerald" as const },
-                  { label: "Location", value: profile.location, accent: "amber" as const },
-                ].map((fact, idx) => (
-                  <AnimatedCard key={idx} accent={fact.accent} noPadding spotlight={false}>
-                    <div className="p-3 text-center">
-                      <span className="text-sm font-bold text-zinc-800 block">{fact.value}</span>
-                      <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-wide mt-0.5 block">{fact.label}</span>
-                    </div>
-                  </AnimatedCard>
-                ))}
-              </div>
 
               {/* Highlight bento cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -188,6 +164,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description=""
             gradient="from-amber-500/8 to-orange-400/6"
             sectionNumber="Portfolio / 02"
+            headingRef={headingRef}
           />
 
           <div className="relative">
@@ -208,8 +185,8 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                   <AnimatedCard accent="amber" innerGlow>
                     {/* Gradient header strip */}
                     <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500 rounded-t-2xl" />
-                    <div className="p-5 md:p-6">
-                      <div className="flex flex-wrap items-start gap-4 mb-4">
+                    <div className="p-4 md:p-6">
+                      <div className="flex flex-wrap items-start gap-3 mb-4">
                         <div
                           className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-base shadow-lg shrink-0"
                           style={{
@@ -223,26 +200,13 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                           <h3 className="text-lg font-extrabold text-zinc-800">{exp.position}</h3>
                           <p className="text-sm font-semibold text-amber-600">{exp.company}</p>
                         </div>
-                        <span className="text-[11px] font-semibold text-zinc-400 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200/40 whitespace-nowrap">
+                        <span className="text-[11px] font-semibold text-zinc-700 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200/40 whitespace-nowrap basis-full sm:basis-auto sm:ml-auto">
                           {exp.period}
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                        {[
-                          "Supports DevOps-related workflows and operational systems.",
-                          "Assists with deployment, monitoring, and infrastructure tasks.",
-                          "Works in a professional enterprise environment.",
-                          "Focus on reliability and collaboration.",
-                        ].map((bullet, i) => (
-                          <div
-                            key={i}
-                            className="flex items-start gap-2 text-[13px] text-zinc-600 bg-white/50 border border-white/40 rounded-lg px-3 py-2"
-                          >
-                            <span className="text-amber-500 mt-0.5 font-bold text-[10px]">{String(i + 1).padStart(2, "0")}.</span>
-                            {bullet}
-                          </div>
-                        ))}
+                      <div className="mb-4 rounded-lg bg-white/50 border border-white/40 px-3 py-2 text-sm text-zinc-700">
+                        {exp.description}
                       </div>
 
                       <div className="flex flex-wrap gap-1.5">
@@ -250,7 +214,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                           (chip) => (
                             <span
                               key={chip}
-                              className="text-[11px] font-medium text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200/40 hover:scale-105 transition-transform cursor-default"
+                              className="text-xs font-medium text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200/40"
                             >
                               {chip}
                             </span>
@@ -282,6 +246,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description="Browse projects by category"
             gradient="from-sky-500/8 to-blue-400/6"
             sectionNumber="Portfolio / 03"
+            headingRef={headingRef}
           />
           <motion.div variants={staggerItem}>
             <FinderProjects />
@@ -305,6 +270,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description="Explore technical skills via terminal"
             gradient="from-zinc-500/8 to-slate-400/6"
             sectionNumber="Portfolio / 04"
+            headingRef={headingRef}
           />
           <motion.div variants={staggerItem}>
             <TerminalWindow />
@@ -313,10 +279,10 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
           {/* Secondary skill bento grid */}
           <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
             {[
-              { icon: Layout, label: "Frontend", items: ["React", "TypeScript", "Tailwind"], accent: "violet" as const },
-              { icon: Server, label: "Backend", items: ["Node.js", "APIs", "SQL"], accent: "sky" as const },
-              { icon: Database, label: "Data", items: ["SQL", "ETL", "BI Tools"], accent: "emerald" as const },
-              { icon: Cloud, label: "DevOps", items: ["Docker", "CI/CD", "Linux"], accent: "amber" as const },
+              { icon: Database, label: "Data Engineering", items: skills.data_engineering, accent: "sky" as const },
+              { icon: Cloud, label: "DevOps & Infrastructure", items: skills.devops, accent: "amber" as const },
+              { icon: Layout, label: "Tools", items: skills.tools, accent: "violet" as const },
+              { icon: Star, label: "Leadership & Collaboration", items: skills.soft_skills, accent: "emerald" as const },
             ].map((group, idx) => (
               <AnimatedCard key={idx} accent={group.accent}>
                 <div className="flex items-center gap-2 mb-2">
@@ -357,6 +323,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description=""
             gradient="from-emerald-500/8 to-teal-400/6"
             sectionNumber="Portfolio / 05"
+            headingRef={headingRef}
           />
 
           <AnimatedCard accent="emerald" innerGlow>
@@ -382,15 +349,15 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                 <div className="bg-emerald-50/70 rounded-xl p-3 text-center border border-emerald-100/40">
                   <span className="text-xl font-extrabold text-emerald-600 block">{profile.education.gpa}</span>
-                  <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-wide">GPA</span>
+                  <span className="text-xs font-medium text-zinc-700 uppercase tracking-wide">GPA</span>
                 </div>
                 <div className="bg-sky-50/70 rounded-xl p-3 text-center border border-sky-100/40">
                   <span className="text-sm font-bold text-sky-700 block">{profile.education.expectedGraduation}</span>
-                  <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-wide">Graduation</span>
+                  <span className="text-xs font-medium text-zinc-700 uppercase tracking-wide">Graduation</span>
                 </div>
                 <div className="bg-violet-50/70 rounded-xl p-3 text-center border border-violet-100/40 sm:col-span-2">
                   <span className="text-sm font-bold text-violet-700 block">Information Systems</span>
-                  <span className="text-[9px] font-medium text-zinc-400 uppercase tracking-wide">Major</span>
+                  <span className="text-xs font-medium text-zinc-700 uppercase tracking-wide">Major</span>
                 </div>
               </div>
 
@@ -419,6 +386,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description="Professional certifications and badges"
             gradient="from-rose-500/8 to-pink-400/6"
             sectionNumber="Portfolio / 06"
+            headingRef={headingRef}
           />
           <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {certifications.map((cert) => (
@@ -450,6 +418,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description=""
             gradient="from-yellow-500/8 to-amber-400/6"
             sectionNumber="Portfolio / 07"
+            headingRef={headingRef}
           />
           <motion.div variants={staggerItem} className="pt-1 relative">
             {/* Central rail */}
@@ -485,6 +454,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
             description=""
             gradient="from-sky-500/8 to-indigo-400/6"
             sectionNumber="Portfolio / 08"
+            headingRef={headingRef}
           />
 
           {/* Main CTA Card */}
@@ -506,28 +476,28 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                 <a
                   href={`mailto:${profile.email}`}
-                  className="flex items-center gap-3 p-3.5 bg-sky-50/70 border border-sky-100/50 rounded-xl hover:shadow-md transition-all group"
+                  className="flex items-center gap-3 p-3.5 bg-sky-50 border border-sky-200 rounded-xl hover:shadow-md transition-all group focus-ring"
                 >
                   <div className="w-10 h-10 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                     <Mail size={16} className="text-sky-600" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">Email</p>
-                    <p className="text-sm font-semibold text-sky-600 group-hover:text-sky-700 break-all transition-colors">
+                    <p className="text-xs font-medium text-zinc-700 uppercase tracking-wide">Email · Primary</p>
+                    <p className="text-sm font-semibold text-sky-800 group-hover:text-sky-900 [overflow-wrap:anywhere] transition-colors">
                       {profile.email}
                     </p>
                   </div>
                 </a>
                 <a
                   href={`tel:${profile.phone}`}
-                  className="flex items-center gap-3 p-3.5 bg-emerald-50/70 border border-emerald-100/50 rounded-xl hover:shadow-md transition-all group"
+                  className="flex items-center gap-3 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl hover:shadow-md transition-all group focus-ring"
                 >
                   <div className="w-10 h-10 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                     <span className="text-emerald-600 text-sm font-bold">📞</span>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">Phone</p>
-                    <p className="text-sm font-semibold text-emerald-600 group-hover:text-emerald-700 transition-colors">
+                    <p className="text-xs font-medium text-zinc-700 uppercase tracking-wide">Phone</p>
+                    <p className="text-sm font-semibold text-emerald-800 group-hover:text-emerald-900 transition-colors">
                       {profile.phone}
                     </p>
                   </div>
@@ -537,7 +507,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                     <MapPin size={16} className="text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">Location</p>
+                    <p className="text-xs font-medium text-zinc-700 uppercase tracking-wide">Location</p>
                     <p className="text-sm font-semibold text-zinc-800">{profile.location}</p>
                   </div>
                 </div>
@@ -550,7 +520,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                   href="https://linkedin.com/in/patricianessa"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full h-[40px] px-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[13px] font-semibold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 transition-all focus-ring"
+                  className="flex items-center justify-center gap-2 w-full h-[40px] px-4 bg-white text-blue-800 border border-blue-300 text-[13px] font-semibold rounded-xl hover:bg-blue-50 transition-all focus-ring"
                 >
                   <ExternalLink size={14} />
                   LinkedIn
@@ -561,7 +531,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                   href="https://github.com/patricianessa"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full h-[40px] px-4 bg-zinc-800 text-white text-[13px] font-semibold rounded-xl shadow-lg shadow-zinc-500/10 hover:shadow-zinc-500/20 transition-all focus-ring"
+                  className="flex items-center justify-center gap-2 w-full h-[40px] px-4 bg-white text-zinc-800 border border-zinc-300 text-[13px] font-semibold rounded-xl hover:bg-zinc-50 transition-all focus-ring"
                 >
                   <Code2 size={14} />
                   GitHub
@@ -571,7 +541,7 @@ export const SectionContent: React.FC<SectionContentProps> = ({ windowId }) => {
                   whileTap={{ scale: 0.98 }}
                   href="/CV_Nessa.pdf"
                   download
-                  className="flex items-center justify-center gap-2 w-full h-[40px] px-4 bg-gradient-to-r from-violet-600 to-violet-500 text-white text-[13px] font-semibold rounded-xl shadow-lg shadow-violet-500/20 hover:shadow-violet-500/35 transition-all focus-ring"
+                  className="flex items-center justify-center gap-2 w-full h-[40px] px-4 bg-white text-violet-800 border border-violet-300 text-[13px] font-semibold rounded-xl hover:bg-violet-50 transition-all focus-ring"
                 >
                   <Download size={14} />
                   Download CV

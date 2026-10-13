@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Award, CheckCircle2 } from "lucide-react";
+import { Award, ExternalLink } from "lucide-react";
 import { staggerItem } from "../lib/motion";
 
 interface CertificateCardProps {
@@ -8,6 +8,7 @@ interface CertificateCardProps {
   issuer: string;
   date: string;
   index: number;
+  verificationUrl?: string;
 }
 
 const accentColors = [
@@ -22,6 +23,7 @@ export const CertificateCard: React.FC<CertificateCardProps> = ({
   issuer,
   date,
   index,
+  verificationUrl,
 }) => {
   const colors = accentColors[index % accentColors.length];
 
@@ -74,17 +76,19 @@ export const CertificateCard: React.FC<CertificateCardProps> = ({
           </div>
         </div>
 
-        {/* Verification pill */}
-        <div className="flex items-center gap-2 mt-3">
-          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200/40 px-2 py-0.5 rounded-full">
-            <CheckCircle2 size={10} />
-            Verified
-          </span>
+        <div className="mt-3">
+          {verificationUrl ? (
+            <a href={verificationUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-violet-800 hover:text-violet-950 focus-ring rounded">
+              <ExternalLink size={12} /> Verify credential
+            </a>
+          ) : (
+            <span className="text-xs font-medium text-zinc-700">Credential</span>
+          )}
         </div>
 
         <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-zinc-100/60">
-          <span className="text-[10px] text-zinc-400 font-medium">Certificate</span>
-          <span className="text-[10px] font-semibold text-zinc-500 bg-white/80 px-2.5 py-0.5 rounded-full border border-zinc-200/50">
+          <span className="text-xs text-zinc-700 font-medium">Issued</span>
+          <span className="text-xs font-semibold text-zinc-700 bg-white/80 px-2.5 py-0.5 rounded-full border border-zinc-200/50">
             {date}
           </span>
         </div>

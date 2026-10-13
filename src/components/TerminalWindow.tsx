@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { skills } from "../data/skills";
 
 const tabs = [
   { id: "skills.json", label: "skills.json", color: "text-violet-600" },
@@ -9,7 +10,7 @@ const tabs = [
 
 const tabContent: Record<string, { text: string; color: string }> = {
   "skills.json": {
-    text: `{\n  "data_engineering": [\n    "SQL",\n    "ETL",\n    "Data Analytics",\n    "Business Intelligence"\n  ],\n  "devops": [\n    "Linux",\n    "Docker",\n    "CI/CD",\n    "Cloud Basics",\n    "Monitoring"\n  ],\n  "tools": [\n    "Excel",\n    "Google Sheets",\n    "IBM Granite",\n    "BI Tools"\n  ],\n  "soft_skills": [\n    "Leadership",\n    "Collaboration",\n    "Communication",\n    "Problem Solving"\n  ]\n}`,
+    text: JSON.stringify(skills, null, 2),
     color: "text-violet-600",
   },
   "devops.sh": {
@@ -31,6 +32,7 @@ const AVAILABLE_CMDS = [
 ];
 
 export const TerminalWindow: React.FC = () => {
+  const reducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState("skills.json");
   const [displayedText, setDisplayedText] = useState("");
   const [cursorVisible, setCursorVisible] = useState(true);
@@ -43,23 +45,32 @@ export const TerminalWindow: React.FC = () => {
 
   // Typewriter for file preview
   useEffect(() => {
-    setIsTyping(true);
-    setDisplayedText("");
-    let index = 0;
     const text = `patricia@portfolio:~$ cat ${activeTab}\n\n${currentContent.text}\n\npatricia@portfolio:~$ `;
-
-    const interval = setInterval(() => {
-      if (index <= text.length) {
-        setDisplayedText(text.substring(0, index));
-        index++;
-      } else {
-        clearInterval(interval);
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const timeout = setTimeout(() => {
+      if (reducedMotion) {
+        setDisplayedText(text);
         setIsTyping(false);
+        return;
       }
-    }, 6);
+      setIsTyping(true);
+      setDisplayedText("");
+      let index = 0;
+      interval = setInterval(() => {
+        index = Math.min(index + 2, text.length);
+        setDisplayedText(text.substring(0, index));
+        if (index >= text.length) {
+          clearInterval(interval);
+          setIsTyping(false);
+        }
+      }, 12);
+    }, 0);
 
-    return () => clearInterval(interval);
-  }, [activeTab]);
+    return () => {
+      clearTimeout(timeout);
+      if (interval) clearInterval(interval);
+    };
+  }, [activeTab, currentContent.text, reducedMotion]);
 
   useEffect(() => {
     const cursorInterval = setInterval(() => {
@@ -89,7 +100,7 @@ export const TerminalWindow: React.FC = () => {
     } else if (cmd === "skills") {
       setHistory((prev) => [
         ...prev,
-        { type: "out", text: "Data Engineering: SQL, ETL, Analytics, BI\nDevOps: Linux, Docker, CI/CD, Cloud, Monitoring\nTools: Excel, Sheets, IBM Granite, BI Tools\nSoft: Leadership, Collaboration, Problem Solving" },
+        { type: "out", text: Object.entries(skills).map(([category, items]) => `${category}: ${items.join(", ")}`).join("\n") },
       ]);
     } else if (cmd === "date") {
       setHistory((prev) => [
@@ -121,10 +132,8 @@ export const TerminalWindow: React.FC = () => {
 
   // Auto-scroll
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [history, displayedText]);
+    if (history.length && scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [history]);
 
   return (
     <div className="relative bg-white rounded-xl overflow-hidden border border-[#d7c8f0] shadow-2xl">
@@ -160,6 +169,7 @@ export const TerminalWindow: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
+            aria-pressed={activeTab === tab.id}
             className={`flex items-center gap-1.5 px-3.5 py-2 text-[11px] font-mono font-medium transition-all duration-200 whitespace-nowrap border-b-2 ${
               activeTab === tab.id
                 ? "text-violet-600 border-violet-500 bg-[#f3edff]"
@@ -177,7 +187,7 @@ export const TerminalWindow: React.FC = () => {
       </div>
 
       {/* Terminal content */}
-      <div ref={scrollRef} className="relative z-20 p-5 font-mono text-[12.5px] overflow-auto max-h-[340px] min-h-[280px] leading-relaxed">
+      <div ref={scrollRef} className="relative z-20 p-4 sm:p-5 font-mono text-[12.5px] overflow-auto max-h-[340px] min-h-[280px] leading-relaxed">
         {/* History */}
         <AnimatePresence>
           {history.map((entry, i) => (
@@ -212,19 +222,20 @@ export const TerminalWindow: React.FC = () => {
         </AnimatePresence>
 
         {/* Interactive prompt */}
-        <div className="mt-4 flex items-center gap-2">
-          <span className="text-violet-600 font-mono shrink-0">patricia@portfolio:~$ </span>
+        <label className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
+          <span className="text-violet-800 font-mono shrink-0">patricia@portfolio:~$ </span>
           <input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="bg-transparent border-none outline-none text-[#2d1b4e] font-mono text-[12.5px] w-[180px] flex-1"
+            aria-label="Enter a terminal command"
+            className="min-w-0 flex-1 bg-transparent border-none text-[#2d1b4e] font-mono text-[12.5px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-700 focus-visible:outline-offset-2"
             placeholder="Type help..."
             spellCheck={false}
             autoComplete="off"
           />
-          <span className="text-[#b9a8d4] text-[10px] shrink-0">↵ to run</span>
-        </div>
+          <span className="text-zinc-700 text-xs shrink-0">Press Enter to run</span>
+        </label>
       </div>
     </div>
   );

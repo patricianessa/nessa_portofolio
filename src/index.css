@@ -136,9 +136,180 @@
 }
 
 /* Ensure grid overlay doesn't block interactions */
-.wallpaper-macos > * {
-  position: relative;
+.wallpaper-macos > :not(.dock-shell) {
   z-index: 1;
+}
+
+.wallpaper-macos > .cursor-spotlight {
+  position: fixed;
+}
+
+.dock-shell {
+  width: max-content;
+  max-width: calc(100vw - 16px);
+}
+
+.dock-items {
+  max-width: 100%;
+}
+
+.dock-item:focus-visible .dock-label {
+  opacity: 1;
+}
+
+@media (max-width: 639px) {
+  .dock-shell {
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: auto;
+    translate: 0 0;
+  }
+
+  .dock-items {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2px;
+    padding: 4px;
+    border-radius: 18px;
+  }
+
+  .dock-item {
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .dock-item > div:first-child {
+    width: 32px;
+    height: 32px;
+  }
+
+  .dock-item > div:first-child svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dock-label {
+    display: block;
+    position: static;
+    translate: none;
+    opacity: 1;
+    padding: 0;
+    color: #3f3f46;
+    background: transparent;
+    font-size: 9px;
+    line-height: 12px;
+    backdrop-filter: none;
+  }
+
+  .topbar-date {
+    display: none;
+  }
+
+  #desktop-area {
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+  }
+
+  .wallpaper-macos {
+    min-height: 100dvh;
+    height: 100dvh;
+  }
+
+  .wallpaper-macos:has(.hero-mobile-scroll) {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .hero-mobile-scroll {
+    height: auto !important;
+    min-height: calc(100dvh - 24px);
+    padding-bottom: 126px;
+  }
+
+  .hero-portrait {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    order: 2;
+    align-self: center;
+    margin: 1.25rem auto 0;
+  }
+
+  .hero-portrait img {
+    height: min(52vw, 260px);
+    max-height: 260px;
+  }
+
+  .hero-mobile-scroll > .flex-1 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-mobile-scroll > .flex-1 > .grid {
+    display: contents;
+  }
+
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(1) {
+    order: 1;
+    margin-inline: 24px;
+  }
+
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(3) {
+    order: 3;
+    margin-top: 1.25rem;
+    margin-inline: 24px;
+  }
+
+  .hero-mobile-scroll > .flex-1 > .absolute:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 359px) {
+  .hero-mobile-scroll > nav { padding-block: 0.75rem; }
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(1) { margin-inline: 12px; }
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(3) { margin-inline: 12px; margin-top: 0.75rem; }
+  .hero-mobile-scroll h1 { font-size: 1.4rem; }
+  .hero-mobile-scroll .hero-card { padding: 0.875rem; }
+  .hero-mobile-scroll .hero-tech-stack { display: none; }
+  .hero-mobile-scroll .flex.flex-wrap.items-center.gap-3 { gap: 0.5rem; }
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(3) { gap: 0.75rem; }
+}
+
+@media (max-width: 639px) and (max-height: 700px) {
+  .hero-mobile-scroll > nav { padding-block: 0.75rem; }
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(1) { gap: 0.75rem; }
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(3) { gap: 0.75rem; margin-top: 0.75rem; }
+  .hero-mobile-scroll .hero-card { padding: 0.875rem; }
+  .hero-mobile-scroll .hero-card { gap: 0.75rem; }
+  .hero-mobile-scroll > .flex-1 > .grid > :nth-child(3) > .flex.flex-wrap.items-center.gap-3 { gap: 0.5rem; }
+}
+
+@media (max-width: 639px) {
+  .hero-actions { gap: 0.5rem; }
+  .hero-actions { order: 1; }
+  .hero-card { order: 2; }
+  .hero-stats { order: 3; }
+  .hero-portrait img { height: min(44vw, 180px); }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-portrait { display: none; }
+}
+
+@media (min-width: 640px) and (max-height: 760px) {
+  .hero-portrait img { height: min(52vh, 400px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto; }
 }
 
 /* ─────── Premium Card System ─────── */
@@ -467,6 +638,15 @@
   outline: none;
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.35), 0 0 0 4px rgba(139, 92, 246, 0.12);
   border-radius: 8px;
+}
+
+.focus-ring:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #6d28d9;
+  outline-offset: 3px;
+  box-shadow: none;
 }
 
 /* Noise texture overlay for hero card tactile feel */

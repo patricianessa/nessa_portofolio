@@ -56,6 +56,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const interval = setInterval(() => {
       setLineIndex((prev) => (prev + 1) % terminalLines.length);
     }, 2500);
@@ -120,7 +121,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="w-full h-full relative flex flex-col md:overflow-hidden"
+      className="w-full h-full relative flex flex-col md:overflow-hidden hero-mobile-scroll"
     >
       {/* Full-hero cursor-following ambient glow */}
       <div
@@ -190,6 +191,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
       {/* Top Navigation */}
       <motion.nav
         variants={itemVariants}
+        aria-label="Social links"
         className="flex justify-between items-center px-6 md:px-12 lg:px-20 py-5 md:py-7 z-50"
       >
         <div className="flex items-center gap-2">
@@ -269,7 +271,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
               </p>
 
               {/* Tech stack pills */}
-              <div className="flex flex-wrap gap-2 relative z-10">
+            <div className="hero-tech-stack flex flex-wrap gap-2 relative z-10">
                 {techStack.map((tech) => (
                   <span
                     key={tech.label}
@@ -283,7 +285,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="hero-actions flex flex-wrap items-center gap-3">
               <motion.button
                 whileHover={{ scale: 1.04, y: -2 }}
                 whileTap={{ scale: 0.97 }}
@@ -309,7 +311,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
             </div>
 
             {/* Stats */}
-            <div className="flex flex-wrap gap-2.5 mt-1">
+            <div className="hero-stats flex flex-wrap gap-2.5 mt-1">
             {stats.map((stat, i) => (
                 <motion.div
                   key={stat.label}
@@ -329,7 +331,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
 
         {/* Portrait — slightly smaller than original and shifted left */}
         <motion.div
-          className="fixed bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none md:absolute"
+          className="hero-portrait fixed bottom-0 md:left-1/2 md:-translate-x-1/2 z-10 pointer-events-none md:absolute"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, type: "spring", damping: 22, stiffness: 100 }}
@@ -337,7 +339,7 @@ export function HeroWidget({ onOpenPortfolio }: HeroWidgetProps) {
           <img
             src={heroImage}
             alt={profile.name}
-            className="h-[300px] sm:h-[380px] md:h-[480px] lg:h-[640px] xl:h-[720px] w-auto object-contain object-bottom select-none"
+            className="h-[250px] sm:h-[320px] md:h-[min(54vh,480px)] lg:h-[min(72vh,640px)] xl:h-[min(76vh,720px)] w-auto object-contain object-bottom select-none"
             style={{
               filter:
                 "drop-shadow(0 28px 55px rgba(124,58,237,0.26)) drop-shadow(0 12px 28px rgba(0,0,0,0.09)) drop-shadow(0 0 85px rgba(168,85,247,0.13))",

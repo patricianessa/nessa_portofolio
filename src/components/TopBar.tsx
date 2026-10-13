@@ -26,18 +26,20 @@ export const TopBar: React.FC = () => {
     const nav = navigator as NavigatorWithBattery;
     if (!nav.getBattery) return;
 
-    let bat: BatteryManager;
+    let bat: BatteryManager | undefined;
+    let update: EventListener | undefined;
+    let active = true;
     nav.getBattery().then((b) => {
+      if (!active) return;
       bat = b;
       setBatteryLevel(Math.round(b.level * 100));
-      const update = () => setBatteryLevel(Math.round(b.level * 100));
+      update = () => setBatteryLevel(Math.round(b.level * 100));
       b.addEventListener("levelchange", update);
     });
 
     return () => {
-      if (bat) {
-        bat.removeEventListener("levelchange", () => {});
-      }
+      active = false;
+      if (bat && update) bat.removeEventListener("levelchange", update);
     };
   }, []);
 
@@ -63,8 +65,8 @@ export const TopBar: React.FC = () => {
       </div>
 
       {/* Center - Date */}
-      <div className="absolute left-1/2 -translate-x-1/2">
-        <span className="text-zinc-500">{formattedDate}</span>
+      <div className="topbar-date absolute left-1/2 -translate-x-1/2">
+        <span className="text-zinc-600">{formattedDate}</span>
       </div>
 
       {/* Right - Battery + Time */}

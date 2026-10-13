@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Home, ChevronRight } from "lucide-react";
 import type { WindowId } from "../types/window";
@@ -27,14 +27,13 @@ export const FullScreenOverlay: React.FC<FullScreenOverlayProps> = ({
   onClose,
 }) => {
   const accentBg = accentColors[sectionId] || "rgba(139, 92, 246, 0.06)";
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
-  // Focus trap for accessibility
   useEffect(() => {
-    const overlay = document.getElementById("overlay-content");
-    if (overlay) {
-      overlay.focus();
-    }
-  }, []);
+    bodyRef.current?.scrollTo({ top: 0 });
+    headingRef.current?.focus();
+  }, [sectionId]);
 
   return (
     <motion.div
@@ -43,10 +42,6 @@ export const FullScreenOverlay: React.FC<FullScreenOverlayProps> = ({
       exit={{ opacity: 0, scale: 0.98, filter: "blur(4px)" }}
       transition={{ type: "spring", damping: 28, stiffness: 300, mass: 0.85 }}
       className="fixed inset-0 z-50 h-screen w-screen overflow-hidden flex flex-col"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-      tabIndex={-1}
       id="overlay-content"
       style={{
         background: `
@@ -143,9 +138,9 @@ export const FullScreenOverlay: React.FC<FullScreenOverlayProps> = ({
       </motion.div>
 
       {/* Body */}
-      <div className="relative z-10 flex-1 overflow-y-auto px-3 md:px-6 py-4 md:py-5 scroll-smooth">
-        <div className="max-w-[1100px] mx-auto w-full pb-28 md:pb-24">
-          <SectionContent windowId={sectionId} />
+      <div ref={bodyRef} className="relative z-10 flex-1 overflow-y-auto px-3 md:px-6 py-4 md:py-5 scroll-smooth">
+        <div className="max-w-[1100px] mx-auto w-full pb-36 sm:pb-28 md:pb-24">
+          <SectionContent windowId={sectionId} headingRef={headingRef} />
         </div>
       </div>
     </motion.div>

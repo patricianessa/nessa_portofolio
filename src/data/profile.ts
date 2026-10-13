@@ -4,11 +4,11 @@ export const profile = {
   subtitle: "Building reliable data workflows, scalable systems, and clean technical solutions.",
   location: "Jakarta, Indonesia",
   email: "patricianessa10123@gmail.com",
-  phone: "081298531248",
+  phone: "+6281298531248",
   availabilityStatus: "Open to opportunities",
   collaborationStatus: "Available for collaboration",
   about:
-    "Patricia Nessa Mae is an Information Systems student and aspiring Data Engineer & DevOps Engineer based in Jakarta. She focuses on data analysis, enterprise systems, infrastructure workflows, and building reliable technical solutions.",
+    "I’m an Information Systems student based in Jakarta, focused on data analysis, enterprise systems, and building practical technical solutions.",
   highlights: [
     {
       title: "Data Engineering",
@@ -28,8 +28,7 @@ export const profile = {
       company: "Adira Finance",
       position: "DevOps Intern",
       period: "Feb 2026 – Present",
-      description:
-        "Supports DevOps-related workflows and operational systems. Assists with deployment, monitoring, and infrastructure tasks. Works in a professional enterprise environment with a focus on reliability and collaboration.",
+      description: "Supports deployment, monitoring, and infrastructure tasks as a DevOps Intern at Adira Finance.",
     },
   ],
   education: {

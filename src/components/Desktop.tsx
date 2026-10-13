@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
   User,
@@ -40,15 +40,49 @@ const dockItems: DockItem[] = [
 ];
 
 export const Desktop: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<WindowId | null>(null);
+  const getSectionFromHash = useCallback((): WindowId | null => {
+    const id = window.location.hash.slice(1);
+    return dockItems.some((item) => item.id === id) ? (id as WindowId) : null;
+  }, []);
+  const [activeSection, setActiveSection] = useState<WindowId | null>(getSectionFromHash);
+  const [focusReturnTarget, setFocusReturnTarget] = useState<HTMLElement | null>(null);
+  const sectionHistoryDepth = useRef<number>(window.history.state?.portfolioDepth ?? 0);
 
   const handleOpenSection = useCallback((id: WindowId) => {
+    if (activeSection === id) return;
     setActiveSection(id);
-  }, []);
+    sectionHistoryDepth.current = (activeSection ? sectionHistoryDepth.current : 0) + 1;
+    window.history.pushState({ section: id, portfolioDepth: sectionHistoryDepth.current }, "", `#${id}`);
+  }, [activeSection]);
 
   const handleCloseSection = useCallback(() => {
     setActiveSection(null);
-  }, []);
+    if (sectionHistoryDepth.current > 0) {
+      window.history.go(-sectionHistoryDepth.current);
+      sectionHistoryDepth.current = 0;
+    } else if (window.location.hash) {
+      window.history.replaceState({}, "", window.location.pathname + window.location.search);
+    }
+    requestAnimationFrame(() => focusReturnTarget?.focus());
+  }, [focusReturnTarget]);
+
+  const handleOpenFromHero = useCallback(() => {
+    setFocusReturnTarget(document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    handleOpenSection("projects");
+  }, [handleOpenSection]);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      sectionHistoryDepth.current = window.history.state?.portfolioDepth ?? 0;
+      setActiveSection(getSectionFromHash());
+    };
+    window.addEventListener("popstate", handleLocationChange);
+    window.addEventListener("hashchange", handleLocationChange);
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+      window.removeEventListener("hashchange", handleLocationChange);
+    };
+  }, [getSectionFromHash]);
 
   // ───── Keyboard Shortcuts ─────
   useEffect(() => {
@@ -57,16 +91,10 @@ export const Desktop: React.FC = () => {
       if (e.key === "Escape" && activeSection) {
         handleCloseSection();
       }
-      // A shortcut to open About (aesthetic only)
-      if (e.key.toLowerCase() === "a" && !activeSection && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (!["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName)) {
-          handleOpenSection("about");
-        }
-      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeSection, handleCloseSection, handleOpenSection]);
+  }, [activeSection, handleCloseSection]);
 
   return (
     <div className="w-screen h-screen wallpaper-macos flex flex-col overflow-hidden select-none relative">
@@ -80,7 +108,7 @@ export const Desktop: React.FC = () => {
         {/* Home Screen: Only visible when no section is active */}
         {!activeSection && (
           <div className="h-full w-full">
-            <HeroWidget onOpenPortfolio={() => handleOpenSection("about")} />
+            <HeroWidget onOpenPortfolio={handleOpenFromHero} />
           </div>
         )}
 
@@ -97,7 +125,10 @@ export const Desktop: React.FC = () => {
       </div>
 
       {/* Dock — persistent across all sections */}
-      <Dock items={dockItems} activeSection={activeSection} onOpenSection={handleOpenSection} />
+      <Dock items={dockItems} activeSection={activeSection} onOpenSection={(id) => {
+        if (!activeSection) setFocusReturnTarget(document.activeElement instanceof HTMLElement ? document.activeElement : null);
+        handleOpenSection(id);
+      }} />
     </div>
   );
 };

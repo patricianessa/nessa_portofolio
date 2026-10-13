@@ -20,7 +20,7 @@ const DOCK_GAP = 6;
 const MAX_MAGNIFY_DIST = 140;
 
 export const Dock: React.FC<DockProps> = ({ items, activeSection, onOpenSection }) => {
-  const dockRef = useRef<HTMLDivElement>(null);
+  const dockRef = useRef<HTMLElement>(null);
   const [mouseX, setMouseX] = useState<number | null>(null);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const Dock: React.FC<DockProps> = ({ items, activeSection, onOpenSection 
 
   const getItemScale = useCallback(
     (index: number): number => {
-      if (mouseX === null || !dockRef.current) return 1;
+      if (mouseX === null) return 1;
 
       const itemCenter = index * (DOCK_ITEM_WIDTH + DOCK_GAP) + DOCK_ITEM_WIDTH / 2;
       const distance = Math.abs(mouseX - itemCenter);
@@ -62,12 +62,13 @@ export const Dock: React.FC<DockProps> = ({ items, activeSection, onOpenSection 
       }
       return 1;
     },
-    [mouseX, items.length]
+    [mouseX]
   );
 
   return (
-    <motion.div
+    <motion.nav
       ref={dockRef}
+      aria-label="Portfolio sections"
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{
@@ -76,10 +77,10 @@ export const Dock: React.FC<DockProps> = ({ items, activeSection, onOpenSection 
         stiffness: 200,
         delay: 0.3,
       }}
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60]"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] dock-shell"
     >
       <div
-        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-2xl"
+        className="dock-items flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-2xl"
         style={{
           background: "rgba(255, 255, 255, 0.62)",
           backdropFilter: "blur(32px)",
@@ -106,13 +107,14 @@ export const Dock: React.FC<DockProps> = ({ items, activeSection, onOpenSection 
               whileHover={{ y: -3 }}
               whileTap={{ scale: 0.92 }}
               onClick={() => onOpenSection(item.id)}
-              className="relative group focus-ring rounded-xl"
+              className="relative group focus-ring rounded-xl dock-item"
               style={{
                 transform: `scale(${scale})`,
                 transition: "transform 0.15s ease-out",
               }}
               title={item.label}
               aria-label={item.label}
+              aria-current={isActive(item.id) ? "page" : undefined}
             >
               <div
                 className={`w-[38px] h-[38px] rounded-xl flex items-center justify-center transition-all duration-200 ${
@@ -135,13 +137,13 @@ export const Dock: React.FC<DockProps> = ({ items, activeSection, onOpenSection 
                 <div className="absolute -bottom-[1px] left-1/2 -translate-x-1/2 w-[3px] h-[3px] rounded-full bg-violet-500" />
               )}
 
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-zinc-800/90 text-white text-[10px] px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none backdrop-blur-sm z-10">
+              <div className="dock-label absolute -top-10 left-1/2 -translate-x-1/2 bg-zinc-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none backdrop-blur-sm z-10">
                 {item.label}
               </div>
             </motion.button>
           );
         })}
       </div>
-    </motion.div>
+    </motion.nav>
   );
 };

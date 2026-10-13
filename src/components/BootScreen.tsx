@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 interface BootScreenProps {
   onComplete: () => void;
 }
 
 export const BootScreen: React.FC<BootScreenProps> = ({ onComplete }) => {
+  const reducedMotion = useReducedMotion();
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<"apple" | "loading" | "complete">("apple");
 
   useEffect(() => {
+    if (reducedMotion || sessionStorage.getItem("portfolio-booted")) {
+      onComplete();
+      return;
+    }
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     // Phase 1: Show Apple logo briefly
@@ -39,12 +44,13 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onComplete }) => {
     // Phase 3: Fade out
     timers.push(
       setTimeout(() => {
+        sessionStorage.setItem("portfolio-booted", "true");
         onComplete();
-      }, 3200)
+      }, 900)
     );
 
     return () => timers.forEach(clearTimeout);
-  }, [onComplete]);
+  }, [onComplete, reducedMotion]);
 
   return (
     <motion.div

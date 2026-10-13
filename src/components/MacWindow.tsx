@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
-import Draggable from "react-draggable";
+import Draggable, { type DraggableData, type DraggableEvent } from "react-draggable";
 
 interface MacWindowProps {
   id: string;
@@ -18,7 +18,7 @@ interface MacWindowProps {
 }
 
 export const MacWindow: React.FC<MacWindowProps> = ({
-  id: _id,
+  id,
   title,
   isOpen,
   isMinimized,
@@ -47,14 +47,8 @@ export const MacWindow: React.FC<MacWindowProps> = ({
   }, []);
 
   // Sync position when defaultPosition changes
-  useEffect(() => {
-    if (defaultPosition) {
-      setPosition(defaultPosition);
-    }
-  }, [defaultPosition]);
-
   const handleDrag = useCallback(
-    (_: any, data: { x: number; y: number }) => {
+    (_: DraggableEvent, data: DraggableData) => {
       setPosition({ x: data.x, y: data.y });
     },
     []
@@ -66,7 +60,7 @@ export const MacWindow: React.FC<MacWindowProps> = ({
   }, [onFocus]);
 
   const handleDragStop = useCallback(
-    (_: any, data: { x: number; y: number }) => {
+    (_: DraggableEvent, data: DraggableData) => {
       setIsDragging(false);
       setPosition({ x: data.x, y: data.y });
       onPositionChange?.({ x: data.x, y: data.y });
@@ -154,6 +148,7 @@ export const MacWindow: React.FC<MacWindowProps> = ({
         },
       }}
       className={containerClass}
+      id={id}
       style={{
         zIndex,
         width: getVariantWidth(),
