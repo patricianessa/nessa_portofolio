@@ -34,7 +34,7 @@ export const profile = {
   education: {
     school: 'Universitas Pembangunan Nasional "Veteran" Jakarta',
     degree: "Bachelor of Computer Science",
-    gpa: "3.76 / 4.00",
+    gpa: "3.75 / 4.00",
     expectedGraduation: "October 2026",
     additional:
       "Participated in the Student Creativity Program and qualified at the university level.",
