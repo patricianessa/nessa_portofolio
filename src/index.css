@@ -262,6 +262,10 @@ dd { margin: 6px 0 0; font-size: 15px; font-weight: 600; }
   .contact-email { font-size: 18px; }
 }
 @media (max-width: 600px) {
+  .ambient-light > div { width: 135vw; height: 65vh; height: 65svh; max-width: none; transform: none; }
+  .ambient-lilac { top: -18%; left: auto; right: -45vw; background: radial-gradient(ellipse, #c9b1e675, #ddd0ed30 40%, transparent 70%); }
+  .ambient-blue { top: 13%; left: -50vw; background: radial-gradient(ellipse, #a0c6ed70, #bdd7f130 40%, transparent 70%); }
+  .ambient-peach { top: 48%; left: auto; right: -30vw; background: radial-gradient(ellipse, #ebc0a970, #efd2bc30 40%, transparent 70%); }
   .page-shell, .site-header { width: calc(100% - 40px); }
   .site-header { height: 76px; }
   .header-location { display: none; }
