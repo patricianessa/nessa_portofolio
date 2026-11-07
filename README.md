@@ -1,17 +1,18 @@
 # Nessa Portfolio — macOS-Inspired Portfolio
 
-A personal portfolio website for **Patricia Nessa Mae** — a Data Engineer & DevOps Engineer — designed as a macOS desktop experience. Built with React, TypeScript, and Vite.
+A personal portfolio website for **Patricia Nessa Mae**, a DevOps Intern at Adira Finance with a background in data engineering. Built with React, TypeScript, and Vite, with a light macOS-inspired glass aesthetic.
 
 ## Features
 
-- **Boot Screen** — Animated macOS-style boot sequence on load
-- **macOS Desktop** — Full-screen desktop with a wallpaper, cursor spotlight effect, and draggable windows
-- **Dock Navigation** — Persistent dock with app icons for each portfolio section (About, Experience, Projects, Skills, Education, Certifications, Leadership, Contact)
-- **Full-Screen Overlays** — Each section opens as a polished overlay with smooth transitions
-- **Terminal Section** — Skills displayed in a retro terminal window with typewriter-like effect
-- **Finder Projects** — macOS Finder sidebar layout for browsing projects with filtering by category
-- **Keyboard Shortcuts** — `A` key opens About, `Escape` closes the active section
-- **Responsive** — Adapts to desktop and tablet viewports
+- **Connected page** — Home, Projects, Experience, About, and Contact in one scrollable reading path
+- **Glass dock** — Labeled section links with an active indicator that follows scrolling
+- **Projects** — Category filters and animated inline details; closing returns focus to the project control
+- **Optional terminal** — `help`, `whoami`, `skills`, `projects`, `contact`, and `clear`, with visible command shortcuts
+- **Complete background** — Education, certifications, leadership, and readable skills within About
+- **Accessible navigation** — Skip link, semantic landmarks, keyboard focus, anchor URLs, and reduced-motion support
+- **Responsive** — Desktop, tablet, mobile, and short-screen layouts with space reserved for the dock
+
+Project summaries use the existing source data. Supporting project artifacts and verification links are not fabricated when unavailable.
 
 ## Tech Stack
 
@@ -70,21 +71,18 @@ docker run -p 80:80 nessa-portfolio
 
 ```
 src/
-├── App.tsx                  # Root — boot screen → desktop flow
+├── App.tsx                  # Root with reduced-motion configuration
 ├── main.tsx                 # Entry point
 ├── index.css                # Global styles (Tailwind + macOS theme)
 ├── components/
-│   ├── BootScreen.tsx       # Animated boot sequence
-│   ├── Desktop.tsx          # Main desktop + dock + keyboard shortcuts
-│   ├── TopBar.tsx           # macOS-style menu bar
-│   ├── Dock.tsx             # Dock with app icons
-│   ├── HeroWidget.tsx       # Hero card with profile intro
-│   ├── FullScreenOverlay.tsx # Animated section overlay wrapper
-│   ├── SectionContent.tsx   # Routes content to correct section component
-│   ├── FinderProjects.tsx   # Projects in Finder sidebar layout
-│   ├── TerminalWindow.tsx   # Skills in retro terminal UI
-│   ├── MacWindow.tsx        # Reusable draggable Mac window
-│   ├── ...                  # Cards, headers, timeline items, etc.
+│   ├── Desktop.tsx          # Connected page and active-section tracking
+│   ├── TopBar.tsx           # Identity and direct contact
+│   ├── Dock.tsx             # Glass anchor navigation
+│   ├── HeroWidget.tsx       # Introduction, portrait, and primary actions
+│   ├── SectionContent.tsx   # Experience, About, and Contact content
+│   ├── FinderProjects.tsx   # Project filters and inline expansions
+│   ├── TerminalWindow.tsx   # Optional command interface
+│   ├── ...                  # Earlier desktop components retained but not mounted
 ├── data/
 │   ├── profile.ts           # Name, title, about, experience, education
 │   ├── projects.ts          # Project entries
